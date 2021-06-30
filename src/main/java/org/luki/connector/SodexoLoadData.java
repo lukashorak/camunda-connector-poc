@@ -1,11 +1,14 @@
 package org.luki.connector;
 
-import com.sun.tools.javac.util.List;
+import org.apache.commons.compress.utils.Lists;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Component
@@ -15,10 +18,8 @@ public class SodexoLoadData implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-
         LOGGER.info("Execute SodexoLoadData");
-        List<String> taskList = List.of("A", "B", "C", "D");
-        ArrayList<String> aStringList = new ArrayList<String>(taskList);
+        ArrayList<String> aStringList = new ArrayList<>(Arrays.asList("A", "B", "C", "D"));
         delegateExecution.setVariable("taskList",aStringList);
     }
 }
