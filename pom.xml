@@ -8,6 +8,7 @@
     <properties>
         <camunda.spring-boot.version>7.15.0</camunda.spring-boot.version>
         <camunda.version.connect>1.5.2</camunda.version.connect>
+        <version.spin>1.10.1</version.spin>
         <spring-boot.version>2.4.4</spring-boot.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -30,6 +31,14 @@
                 <type>pom</type>
                 <version>${camunda.version.connect}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.camunda.spin</groupId>
+                <artifactId>camunda-spin-bom</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${version.spin}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -39,6 +48,14 @@
             <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
             <version>${camunda.spring-boot.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+            <version>${camunda.spring-boot.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.camunda.connect</groupId>
             <artifactId>camunda-connect-core</artifactId>
@@ -61,9 +78,26 @@
         </dependency>
 
         <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-dataformat-all</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-rest-openapi</artifactId>
+            <version>${camunda.spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>

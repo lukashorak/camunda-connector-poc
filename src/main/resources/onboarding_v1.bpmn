@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_032vya8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_032vya8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
   <bpmn:collaboration id="Collaboration_14aihzd">
     <bpmn:participant id="Participant_1e4ivh8" name="OnboardingProcess" processRef="Process_0ilyzsb" />
   </bpmn:collaboration>
@@ -31,18 +31,16 @@
       <bpmn:incoming>Flow_07ejeik</bpmn:incoming>
       <bpmn:outgoing>Flow_1mpvfnr</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0ntw85b" sourceRef="Activity_1slm1et" targetRef="Activity_0dnra10" />
-    <bpmn:endEvent id="Event_0g6sl14">
-      <bpmn:incoming>Flow_0g7xz1f</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:userTask id="Activity_0dnra10" name="Review Main">
-      <bpmn:incoming>Flow_0ntw85b</bpmn:incoming>
-      <bpmn:outgoing>Flow_0g7xz1f</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_1slm1et" name="Sample Connector POST">
+    <bpmn:sequenceFlow id="Flow_0ntw85b" sourceRef="Activity_1slm1et" targetRef="Gateway_0eaz7f6" />
+    <bpmn:serviceTask id="Activity_1slm1et" name="Sample Connector POST" camunda:asyncAfter="true">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
             <camunda:inputParameter name="payload">${payload}</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="url">https://reqres.in/api/users</camunda:inputParameter>
@@ -61,24 +59,79 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="payload" label="payload" type="string" defaultValue="{&#34;name&#34;: &#34;morpheus&#34;, &#34;job&#34;: &#34;leader&#34;}" />
+          <camunda:formField id="payload2" label="payload2" type="string" defaultValue="{     &#34;email&#34;: &#34;eve.holt@reqres.in&#34;,     &#34;password&#34;: &#34;cityslicka&#34; }" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mpvfnr</bpmn:incoming>
       <bpmn:outgoing>Flow_10ngdqv</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0eaz7f6" default="Flow_1acting">
+      <bpmn:incoming>Flow_0ntw85b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1acting</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0l4aslj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1acting" sourceRef="Gateway_0eaz7f6" targetRef="Activity_0dnra10" />
+    <bpmn:sequenceFlow id="Flow_0l4aslj" sourceRef="Gateway_0eaz7f6" targetRef="Activity_1flpc9t">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${POSTstatusCode == 201}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0g6sl14">
+      <bpmn:incoming>Flow_0g7xz1f</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_0dnra10" name="Review Main">
+      <bpmn:incoming>Flow_1acting</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g7xz1f</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1aktq7k" sourceRef="Activity_1flpc9t" targetRef="Activity_13ayc6f" />
+    <bpmn:endEvent id="Event_0ds9rbq">
+      <bpmn:incoming>Flow_0p7dpy9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0p7dpy9" sourceRef="Activity_13ayc6f" targetRef="Event_0ds9rbq" />
+    <bpmn:userTask id="Activity_13ayc6f" name="Review 2">
+      <bpmn:incoming>Flow_1aktq7k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p7dpy9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_1flpc9t" name="Workshop connector">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">https://reqres.in/api/login</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="payload">${payload2}</camunda:inputParameter>
+            <camunda:outputParameter name="C2StatusCode">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="C2Response">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0l4aslj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1aktq7k</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_14aihzd">
       <bpmndi:BPMNShape id="Participant_1e4ivh8_di" bpmnElement="Participant_1e4ivh8" isHorizontal="true">
-        <dc:Bounds x="152" y="125" width="918" height="250" />
+        <dc:Bounds x="152" y="125" width="1138" height="250" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_10ngdqv_di" bpmnElement="Flow_10ngdqv">
+        <di:waypoint x="670" y="250" />
+        <di:waypoint x="710" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ntw85b_di" bpmnElement="Flow_0ntw85b">
+        <di:waypoint x="810" y="250" />
+        <di:waypoint x="835" y="250" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mpvfnr_di" bpmnElement="Flow_1mpvfnr">
         <di:waypoint x="540" y="250" />
         <di:waypoint x="570" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g7xz1f_di" bpmnElement="Flow_0g7xz1f">
-        <di:waypoint x="960" y="250" />
-        <di:waypoint x="1002" y="250" />
+        <di:waypoint x="1140" y="330" />
+        <di:waypoint x="1182" y="330" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07ejeik_di" bpmnElement="Flow_07ejeik">
         <di:waypoint x="390" y="250" />
@@ -88,13 +141,23 @@
         <di:waypoint x="238" y="250" />
         <di:waypoint x="290" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ntw85b_di" bpmnElement="Flow_0ntw85b">
-        <di:waypoint x="810" y="250" />
-        <di:waypoint x="860" y="250" />
+      <bpmndi:BPMNEdge id="Flow_1acting_di" bpmnElement="Flow_1acting">
+        <di:waypoint x="860" y="275" />
+        <di:waypoint x="860" y="330" />
+        <di:waypoint x="1040" y="330" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10ngdqv_di" bpmnElement="Flow_10ngdqv">
-        <di:waypoint x="670" y="250" />
-        <di:waypoint x="710" y="250" />
+      <bpmndi:BPMNEdge id="Flow_0l4aslj_di" bpmnElement="Flow_0l4aslj">
+        <di:waypoint x="860" y="225" />
+        <di:waypoint x="860" y="190" />
+        <di:waypoint x="900" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aktq7k_di" bpmnElement="Flow_1aktq7k">
+        <di:waypoint x="1000" y="190" />
+        <di:waypoint x="1050" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p7dpy9_di" bpmnElement="Flow_0p7dpy9">
+        <di:waypoint x="1150" y="190" />
+        <di:waypoint x="1202" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="202" y="232" width="36" height="36" />
@@ -105,17 +168,29 @@
       <bpmndi:BPMNShape id="Activity_1v4yjk3_di" bpmnElement="Activity_0jun6rk">
         <dc:Bounds x="440" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0g6sl14_di" bpmnElement="Event_0g6sl14">
-        <dc:Bounds x="1002" y="232" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1gspdi0_di" bpmnElement="Activity_0dnra10">
-        <dc:Bounds x="860" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0232dva_di" bpmnElement="Activity_1slm1et">
         <dc:Bounds x="710" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0rjzc4r_di" bpmnElement="Activity_025vb7g">
         <dc:Bounds x="570" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0eaz7f6_di" bpmnElement="Gateway_0eaz7f6" isMarkerVisible="true">
+        <dc:Bounds x="835" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0g6sl14_di" bpmnElement="Event_0g6sl14">
+        <dc:Bounds x="1182" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gspdi0_di" bpmnElement="Activity_0dnra10">
+        <dc:Bounds x="1040" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ds9rbq_di" bpmnElement="Event_0ds9rbq">
+        <dc:Bounds x="1202" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1abmkx9_di" bpmnElement="Activity_13ayc6f">
+        <dc:Bounds x="1050" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yga7ah_di" bpmnElement="Activity_1flpc9t">
+        <dc:Bounds x="900" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
