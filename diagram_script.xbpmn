@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0qzozd3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="Process_0i8t2x3" name="skript" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_12yjoa0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_12yjoa0" sourceRef="StartEvent_1" targetRef="Activity_03w9yb9" />
+    <bpmn:sequenceFlow id="Flow_0slhl5x" sourceRef="Activity_03w9yb9" targetRef="Activity_05ingrf" />
+    <bpmn:sequenceFlow id="Flow_0zsiq05" sourceRef="Activity_05ingrf" targetRef="Activity_0gf8v85" />
+    <bpmn:endEvent id="Event_0ie7x4v">
+      <bpmn:incoming>Flow_19pknmb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_19pknmb" sourceRef="Activity_0gf8v85" targetRef="Event_0ie7x4v" />
+    <bpmn:userTask id="Activity_0gf8v85" name="done" camunda:assignee="demo">
+      <bpmn:incoming>Flow_0zsiq05</bpmn:incoming>
+      <bpmn:outgoing>Flow_19pknmb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_03w9yb9" name="prep">
+      <bpmn:incoming>Flow_12yjoa0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0slhl5x</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_05ingrf" name="run" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0slhl5x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zsiq05</bpmn:outgoing>
+      <bpmn:script>var json = task.execution.getVariable("masterProcessData");
+var masterProcessData = S(json);
+var newPhoneNumber = task.execution.getVariableLocal("newPhoneNumber");
+var newPhoneNumberPrefix = task.execution.getVariableLocal("newPhoneNumberPrefix");
+var phoneNumber = masterProcessData.prop("contact").prop("phoneNumber");
+var phoneNumberPrefix = masterProcessData.prop("contact").prop("phoneNumberPrefix");
+if (JSON.stringify(phoneNumber) != JSON.stringify(newPhoneNumber) || JSON.stringify(phoneNumberPrefix) != JSON.stringify(newPhoneNumberPrefix)) 
+    {
+    masterProcessData.prop("contact").prop("phoneNumber", newPhoneNumber);
+    masterProcessData.prop("contact").prop("phoneNumberPrefix", newPhoneNumberPrefix);
+    var arrayOld = masterProcessData.prop("contact").prop("arrayOld");
+    arrayOld.append(
+        {
+            "phoneNumber": phoneNumber, 
+            "phoneNumberPrefix": phoneNumberPrefix
+        }
+    );
+    masterProcessData.prop("contact").prop("arrayOld", arrayOld);
+    var counter = task.execution.getVariable('phoneChangeCounter')
+    counter = counter + 1;
+    
+    task.execution.setVariable('phoneChangeCounter', counter);
+    task.execution.setVariable("masterProcessData",masterProcessData);
+    }</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0i8t2x3">
+      <bpmndi:BPMNEdge id="Flow_12yjoa0_di" bpmnElement="Flow_12yjoa0">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0slhl5x_di" bpmnElement="Flow_0slhl5x">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="400" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zsiq05_di" bpmnElement="Flow_0zsiq05">
+        <di:waypoint x="500" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19pknmb_di" bpmnElement="Flow_19pknmb">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="722" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ie7x4v_di" bpmnElement="Event_0ie7x4v">
+        <dc:Bounds x="722" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09rttof_di" bpmnElement="Activity_0gf8v85">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19jqj3d_di" bpmnElement="Activity_03w9yb9">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jpnt90_di" bpmnElement="Activity_05ingrf">
+        <dc:Bounds x="400" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1m8dyfv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="Process_0yibfkz" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0uirdyz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0uirdyz" sourceRef="StartEvent_1" targetRef="Activity_19i51iw" />
+    <bpmn:scriptTask id="Activity_1v5ssqz" name="createJson" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0xnb8x8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k988og</bpmn:outgoing>
+      <bpmn:script>var varMessage = execution.getVariable("varMessage");
+var emailVerificationToken = execution.getVariable("emailVerificationToken");
+
+var someArray = ["v1", "v2", "v3"];
+someArray.push("vAdd");
+
+var json = {"varMessage": varMessage, "emailVerificationToken": emailVerificationToken, "someArray": someArray}
+var jsonSpin = S(JSON.stringify(json));
+
+var append = varMessage + "---" + emailVerificationToken;
+
+execution.setVariable("simpleJson", jsonSpin );
+execution.setVariable("append ", append);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1k988og" sourceRef="Activity_1v5ssqz" targetRef="Activity_0yc83rl" />
+    <bpmn:userTask id="Activity_0j9i0l3" name="end">
+      <bpmn:incoming>Flow_06ulmi9</bpmn:incoming>
+      <bpmn:outgoing>Flow_192bwte</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1d611cd">
+      <bpmn:incoming>Flow_192bwte</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_192bwte" sourceRef="Activity_0j9i0l3" targetRef="Event_1d611cd" />
+    <bpmn:sequenceFlow id="Flow_0xnb8x8" sourceRef="Activity_19i51iw" targetRef="Activity_1v5ssqz" />
+    <bpmn:scriptTask id="Activity_19i51iw" name="init" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0uirdyz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xnb8x8</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("varMessage", "somePhone");
+execution.setVariable("emailVerificationToken", "someToken");</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_06ulmi9" sourceRef="Activity_0yc83rl" targetRef="Activity_0j9i0l3" />
+    <bpmn:scriptTask id="Activity_0yc83rl" name="extract" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1k988og</bpmn:incoming>
+      <bpmn:outgoing>Flow_06ulmi9</bpmn:outgoing>
+      <bpmn:script>var jsonSpin = S(execution.getVariable("simpleJson"));
+
+var varMessage = JSON.parse(jsonSpin.prop("varMessage"));
+var emailVerificationToken = JSON.parse(jsonSpin.prop("emailVerificationToken"));
+
+var appendLater = varMessage + "--" + emailVerificationToken;
+
+execution.setVariable("appendLater", appendLater);
+
+jsonSpin.prop("appendLater", appendLater);
+execution.setVariable("simpleJson", jsonSpin);
+</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0yibfkz">
+      <bpmndi:BPMNEdge id="Flow_0uirdyz_di" bpmnElement="Flow_0uirdyz">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="210" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k988og_di" bpmnElement="Flow_1k988og">
+        <di:waypoint x="470" y="120" />
+        <di:waypoint x="520" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_192bwte_di" bpmnElement="Flow_192bwte">
+        <di:waypoint x="800" y="120" />
+        <di:waypoint x="882" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xnb8x8_di" bpmnElement="Flow_0xnb8x8">
+        <di:waypoint x="310" y="120" />
+        <di:waypoint x="370" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06ulmi9_di" bpmnElement="Flow_06ulmi9">
+        <di:waypoint x="620" y="120" />
+        <di:waypoint x="700" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1shj68e_di" bpmnElement="Activity_1v5ssqz">
+        <dc:Bounds x="370" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05lil9v_di" bpmnElement="Activity_19i51iw">
+        <dc:Bounds x="210" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1d611cd_di" bpmnElement="Event_1d611cd">
+        <dc:Bounds x="882" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0goqo9o_di" bpmnElement="Activity_0j9i0l3">
+        <dc:Bounds x="700" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w556rx_di" bpmnElement="Activity_0yc83rl">
+        <dc:Bounds x="520" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

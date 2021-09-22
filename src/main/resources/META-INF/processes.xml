@@ -11,6 +11,7 @@
             <property name="isResumePreviousVersions">true</property>
             <property name="resumePreviousBy">process-definition-key</property>
             <property name="javaSerializationFormatEnabled">true</property>
+            <property name="enableExceptionsAfterUnhandledBpmnError">true</property>
         </properties>
     </process-archive>
 </process-application>

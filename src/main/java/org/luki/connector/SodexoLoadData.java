@@ -15,6 +15,8 @@ public class SodexoLoadData implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
+
+
         LOGGER.info("Execute SodexoLoadData");
         ArrayList<String> aStringList = new ArrayList<>(Arrays.asList("A", "B", "C", "D"));
         delegateExecution.setVariable("taskList",aStringList);
